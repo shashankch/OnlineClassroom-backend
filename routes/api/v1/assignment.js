@@ -19,7 +19,7 @@ router.get(
 
 // route to submit assignment.
 router.post(
-  '/assignments/:id',
+  '/assignments',
   passport.authenticate('jwt', { session: false }),
   assignmentApi.submitAssignment
 );
@@ -29,7 +29,7 @@ router.get('/all-assignments', assignmentApi.getAllAssignments);
 
 //route to evaluate assignments
 router.get(
-  '/evaluate/:aid/:sid/:grade',
+  '/evaluate',
   passport.authenticate('jwt', { session: false }),
   assignmentApi.evaluateAssignments
 );
