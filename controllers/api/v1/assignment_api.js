@@ -46,6 +46,7 @@ module.exports.submitAssignment = async (req, res) => {
       if (assignment) {
         console.log('inside assignment', assignment);
         Assignment.uploadedAssignment(req, res, function (err) {
+          console.log('inside multer***', req);
           if (err) {
             return res.status(500).json(err);
           }
