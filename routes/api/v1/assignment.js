@@ -19,7 +19,7 @@ router.get(
 
 // route to submit assignment.
 router.post(
-  '/assignments',
+  '/submit',
   passport.authenticate('jwt', { session: false }),
   assignmentApi.submitAssignment
 );

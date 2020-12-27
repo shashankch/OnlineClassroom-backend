@@ -51,10 +51,10 @@ let storage = multer.diskStorage({
 });
 
 // static
-userSchema.statics.uploadedAssignment = multer({ storage: storage }).single(
+assignmentSchema.statics.uploadedAssignment = multer({ storage: storage }).single(
   'upload'
 );
-userSchema.statics.assignPath = ASSIGN_PATH;
+assignmentSchema.statics.assignPath = ASSIGN_PATH;
 
 // creating model from schema
 const Assignment = mongoose.model('Assignment', assignmentSchema);

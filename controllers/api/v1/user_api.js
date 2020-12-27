@@ -108,7 +108,7 @@ module.exports.login = async (req, res) => {
 };
 
 // controller action to update name and  passwords stored in encrypted format
-module.exports.update = async function (req, res) {
+module.exports.updateCredentials = async function (req, res) {
   try {
     // to check if password and confirm pass matches
 

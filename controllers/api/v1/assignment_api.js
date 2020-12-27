@@ -53,13 +53,13 @@ module.exports.submitAssignment = async (req, res) => {
 
           if (req.file) {
 
-            await assignment.students.push({
+            assignment.students.push({
               id: req.body.id,
               status: 'submitted',
               upload: Assignment.assignPath + '/' + req.file.filename
 
             });
-            await assignment.save();
+           assignment.save();
             return res.status(200).json({
               message: 'assignment submitted!',
               success: true,
