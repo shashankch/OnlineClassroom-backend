@@ -67,8 +67,10 @@ module.exports.login = async (req, res) => {
 
     // check if user does not exists or invalid credentials and sending appropriate response
     if (user) {
-      bcrypt.compare(user.password, req.body.password, function (err, result) {
-        if (result != true) {
+      console.log('user', user);
+      bcrypt.compare(req.body.password, user.password, function (err, result) {
+        console.log('result:', result);
+        if (result !== true) {
           return res.status(422).json({
             message: 'Invalid username or password',
             success: false,

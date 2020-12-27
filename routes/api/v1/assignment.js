@@ -11,7 +11,7 @@ const passport = require('passport');
 const assignmentApi = require('../../../controllers/api/v1/assignment_api');
 
 // route to create assignment
-router.get(
+router.post(
   '/create',
   passport.authenticate('jwt', { session: false }),
   assignmentApi.createAssignment
@@ -28,7 +28,7 @@ router.post(
 router.get('/all-assignments', assignmentApi.getAllAssignments);
 
 //route to evaluate assignments
-router.get(
+router.post(
   '/evaluate',
   passport.authenticate('jwt', { session: false }),
   assignmentApi.evaluateAssignments

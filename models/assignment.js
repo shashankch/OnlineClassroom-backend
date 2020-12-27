@@ -51,9 +51,9 @@ let storage = multer.diskStorage({
 });
 
 // static
-assignmentSchema.statics.uploadedAssignment = multer({ storage: storage }).single(
-  'upload'
-);
+assignmentSchema.statics.uploadedAssignment = multer({
+  storage: storage,
+}).single('file');
 assignmentSchema.statics.assignPath = ASSIGN_PATH;
 
 // creating model from schema
