@@ -16,14 +16,20 @@ const passport = require('passport');
 // import passport jwt strategy
 const passportJWT = require('./config/passport-jwt-strategy');
 
+const cors = require('cors');
+
 // to parse form data
 app.use(express.urlencoded({ extended: true }));
 
+
+app.use(cors());
 // initialize passport t
 app.use(passport.initialize());
 
 // including routes
 app.use('/', require('./routes'));
+
+
 
 // listen on the port
 app.listen(port, function (err) {
