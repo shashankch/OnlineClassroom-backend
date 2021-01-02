@@ -9,7 +9,7 @@ const port = 8000;
 
 // import mongodb  configuration
 const db = require('./config/mongoose');
-
+app.use('/public', express.static(__dirname + '/public'));
 // import passport to authenticate user and requests
 const passport = require('passport');
 
@@ -17,19 +17,17 @@ const passport = require('passport');
 const passportJWT = require('./config/passport-jwt-strategy');
 
 const cors = require('cors');
+var multer = require('multer');
 
-// to parse form data
 app.use(express.urlencoded({ extended: true }));
-
+// make the uploads path available to the browser
 
 app.use(cors());
-// initialize passport t
+// initialize passport
 app.use(passport.initialize());
 
 // including routes
 app.use('/', require('./routes'));
-
-
 
 // listen on the port
 app.listen(port, function (err) {

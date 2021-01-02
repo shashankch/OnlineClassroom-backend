@@ -15,4 +15,6 @@ router.post(
   userApi.updateCredentials
 );
 
+router.get('/all-students', userApi.allStudents);
+
 module.exports = router;

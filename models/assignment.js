@@ -1,9 +1,6 @@
 // import mongoose odm module
 const mongoose = require('mongoose');
 
-const multer = require('multer');
-const path = require('path');
-const ASSIGN_PATH = path.join('/students/submissions');
 // creating the asset schema
 const assignmentSchema = new mongoose.Schema(
   {
@@ -40,21 +37,6 @@ const assignmentSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-
-let storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, '..', ASSIGN_PATH));
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.fieldname + '-' + Date.now());
-  },
-});
-
-// static
-assignmentSchema.statics.uploadedAssignment = multer({
-  storage: storage,
-}).single('upload');
-assignmentSchema.statics.assignPath = ASSIGN_PATH;
 
 // creating model from schema
 const Assignment = mongoose.model('Assignment', assignmentSchema);

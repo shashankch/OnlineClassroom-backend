@@ -162,3 +162,24 @@ module.exports.updateCredentials = async function (req, res) {
     });
   }
 };
+
+module.exports.allStudents = async (req, res) => {
+  try {
+    let students = await User.find({
+      type: 'student',
+    }).sort('createdAt');
+
+    return res.status(200).json({
+      message: 'list of students',
+      data: { students: students },
+      success: true,
+    });
+  } catch (error) {
+    // send error response on req fail
+    console.log('***', err);
+    return res.json(500, {
+      message: 'Internal Server Error',
+      success: false,
+    });
+  }
+};

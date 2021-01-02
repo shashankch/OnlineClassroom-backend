@@ -2,17 +2,20 @@
 const Assignment = require('../../../models/assignment');
 // import user model
 const User = require('../../../models/user');
-
+const multer = require('multer');
+const path = require('path');
 module.exports.createAssignment = async (req, res) => {
   try {
-    let user = await User.findById(req.user._id);
+    let user = await User.findById(req.user.id);
+    console.log('dfdsfs', req.body);
 
-    if (user && user.type === 'teacher' && req.body.id === req.user.id) {
+    if (user && user.type === 'teacher') {
       let assign = await Assignment.create({
         title: req.body.title,
         description: req.body.description,
-        owner: user,
+        owner: req.body.id,
       });
+      console.log('assign bangaya', assign);
       await user.assignment.push(assign);
       await user.save();
       return res.status(200).json({
@@ -34,48 +37,52 @@ module.exports.createAssignment = async (req, res) => {
     });
   }
 };
-
+let storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './public');
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now());
+  },
+});
+let upload = multer({ storage: storage }).single('file');
 module.exports.submitAssignment = async (req, res) => {
   try {
     let user = await User.findById(req.user._id);
 
-    if (user && user.type === 'student' && req.body.id === req.user.id) {
-      console.log('inside user', user);
-      console.log('file', req.file);
-      let assignment = await Assignment.findById(req.body.aid);
-      if (assignment) {
-        console.log('inside assignment', assignment);
-        Assignment.uploadedAssignment(req, res, function (err) {
-          console.log('inside multer***', req);
-          if (err) {
-            return res.status(500).json(err);
-          }
+    if (user && user.type === 'student') {
+      upload(req, res, function (err) {
+        if (err) {
+          return res.status(500).json(err);
+        }
 
-          if (req.file) {
-            console.log('inside file', req.file);
-            assignment.students.push({
-              id: req.body.id,
-              status: 'submitted',
-              upload: Assignment.assignPath + '/' + req.file.filename,
-            });
-            assignment.save();
-            return res.status(200).json({
-              message: 'assignment submitted!',
-              success: true,
-            });
-          } else {
-            return res.status(401).json({
-              message: 'Invalid Request',
-              success: false,
-            });
+        const reqObj = JSON.parse(JSON.stringify(req.body));
+        console.log('reqObj', reqObj.aid);
+
+        let assignment = Assignment.findById(
+          reqObj.aid,
+          function (err, assign) {
+            console.log('assignment********', assign);
+            if (req.file && assign) {
+              assign.students.push({
+                id: req.user._id,
+                status: 'submitted',
+                upload: '/public' + '/' + req.file.filename,
+              });
+              assign.save();
+              return res.status(200).json({
+                message: 'assignment submitted!',
+                success: true,
+              });
+            } else {
+              return res.status(401).json({
+                message: 'Invalid Request',
+                success: false,
+              });
+            }
           }
-        });
-      } else {
-        return res.status(401).json({
-          message: 'Invalid Request',
-          success: false,
-        });
-      }
+        );
+      });
     } else {
       return res.status(401).json({
         message: 'Invalid Request',
@@ -96,30 +103,39 @@ module.exports.getAllAssignments = async (req, res) => {
   try {
     let assignments = await Assignment.find({})
       .sort('createdAt')
-      .populate('students');
+      .populate({
+        path: 'students',
+        populate: {
+          path: 'id',
+        },
+      });
 
     return res.status(200).json({
       message: 'list of assignments',
-      assignments: assignments,
+      data: { assignments: assignments },
+      success: true,
     });
   } catch (error) {
     // send error response on req fail
     console.log('***', err);
     return res.json(500, {
       message: 'Internal Server Error',
+      success: false,
     });
   }
 };
 
 module.exports.evaluateAssignments = async (req, res) => {
   try {
-    let user = await User.findById(req.body.id);
-    if (user && user.type === 'teacher' && req.body.id === req.user.id) {
+    let user = await User.findById(req.user._id);
+    if (user && user.type === 'teacher') {
+      console.log('indsiddd', req.body);
       let assignment = await Assignment.findById(req.body.aid);
       let std = await User.findById(req.body.sid);
       let exists = false;
       // let aid=null;
       if (assignment && std) {
+        console.log('***');
         for (let obj of assignment.students) {
           if (obj.id == req.body.sid) {
             exists = true;
@@ -158,6 +174,7 @@ module.exports.evaluateAssignments = async (req, res) => {
   } catch (error) {
     return res.json(500, {
       message: 'Internal Server Error',
+      success: false,
     });
   }
 };
