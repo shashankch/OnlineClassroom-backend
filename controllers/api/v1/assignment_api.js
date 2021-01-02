@@ -103,6 +103,7 @@ module.exports.getAllAssignments = async (req, res) => {
   try {
     let assignments = await Assignment.find({})
       .sort('createdAt')
+      .populate({ path: 'owner', select: 'name email' })
       .populate({
         path: 'students',
         populate: {
@@ -172,6 +173,32 @@ module.exports.evaluateAssignments = async (req, res) => {
       });
     }
   } catch (error) {
+    return res.json(500, {
+      message: 'Internal Server Error',
+      success: false,
+    });
+  }
+};
+
+module.exports.getAllAssignmentsbyId = async (req, res) => {
+  try {
+    let assignments = await Assignment.find({ owner: req.body.id })
+      .sort('createdAt')
+      .populate({
+        path: 'students',
+        populate: {
+          path: 'id',
+        },
+      });
+
+    return res.status(200).json({
+      message: 'list of assignments',
+      data: { assignments: assignments },
+      success: true,
+    });
+  } catch (error) {
+    // send error response on req fail
+    console.log('***', err);
     return res.json(500, {
       message: 'Internal Server Error',
       success: false,

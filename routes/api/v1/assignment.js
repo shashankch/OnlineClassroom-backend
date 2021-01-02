@@ -27,6 +27,12 @@ router.post(
 //route to get all assignments
 router.get('/all-assignments', assignmentApi.getAllAssignments);
 
+router.post(
+  '/my-assign',
+  passport.authenticate('jwt', { session: false }),
+  assignmentApi.getAllAssignmentsbyId
+);
+
 //route to evaluate assignments
 router.post(
   '/evaluate',

@@ -24,27 +24,14 @@ module.exports.register = async (req, res) => {
         type: req.body.type,
       });
 
-      // removing sensitive info like password from newly created user object
-      let newUserObj = newUser.toObject();
-      delete newUserObj.password;
-
       // sending the success response message along with registered user info.
       return res.status(200).json({
-        data: {
-          user: newUserObj,
-        },
         message: 'Registration Success!',
         success: true,
       });
     } else {
-      let userObj = user.toObject();
-      delete userObj.password;
-
       // if present then sending that registered  user info
       return res.status(200).json({
-        data: {
-          user: userObj,
-        },
         message: 'Already registered with us!',
         success: false,
       });
